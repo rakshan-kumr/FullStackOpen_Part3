@@ -61,6 +61,30 @@ app.get("/info", (request, response) => {
   );
 });
 
+app.post("/api/persons/", (request, response) => {
+  const personBody = request.body;
+
+  if (!personBody.name | !personBody.number) {
+    return response.status(400).json({
+      error: "Invalid phonebook contents.",
+    });
+  }
+
+  const person = {
+    name: personBody.name,
+    number: personBody.number,
+    id: generateId(),
+  };
+
+  phonebook = phonebook.concat(person);
+
+  response.json(phonebook);
+});
+
+const generateId = () => {
+  return Math.floor(Math.random() * 1000);
+};
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

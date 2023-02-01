@@ -6,3 +6,13 @@ GET http://localhost:3001/api/persons/2
 ###
 DELETE http://localhost:3001/api/persons/5
 
+###
+
+POST http://localhost:3001/api/persons HTTP/1.1
+Content-Type: application/json
+
+{
+    "name" : "Rakshan Kumar",
+    "number" : "120-09324-2309"
+}
+

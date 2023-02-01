@@ -31,10 +31,18 @@ app.get("/api/persons", (request, response) => {
   response.json(phonebook);
 });
 
+app.get("/api/persons/:id", (request, response) => {
+  const phonebookId = Number(request.params.id);
+  const person = phonebook.find((person) => person.id === phonebookId);
+
+  if (person) response.json(person);
+  else response.status(404).end();
+});
+
 app.get("/info", (request, response) => {
   response.send(
     `<div>
-    <p>Phonebook has info of ${phonebook.length} people</p>
+    <p>Phonebook has info for ${phonebook.length} people</p>
 
     ${new Date()}
     </div>

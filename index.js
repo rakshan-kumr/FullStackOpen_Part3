@@ -66,7 +66,15 @@ app.post("/api/persons/", (request, response) => {
 
   if (!personBody.name | !personBody.number) {
     return response.status(400).json({
-      error: "Invalid phonebook contents.",
+      error: "name or number field can't be empty",
+    });
+  }
+
+  const isExist = phonebook.some((person) => person.name === personBody.name);
+
+  if (isExist) {
+    return response.status(400).json({
+      error: "name must be unique",
     });
   }
 

@@ -39,6 +39,17 @@ app.get("/api/persons/:id", (request, response) => {
   else response.status(404).end();
 });
 
+app.delete("/api/persons/:id", (requests, response) => {
+  const phonebookId = Number(requests.params.id);
+  const person = phonebook.find((person) => person.id === phonebookId);
+
+  if (person) {
+    phonebook = phonebook.filter((person) => person.id !== phonebookId);
+  } else return response.status(404).end();
+
+  response.status(204).end();
+});
+
 app.get("/info", (request, response) => {
   response.send(
     `<div>

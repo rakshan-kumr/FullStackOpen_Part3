@@ -85,7 +85,6 @@ app.post("/api/persons/", (request, response) => {
   };
 
   phonebook = phonebook.concat(person);
-
   response.json(phonebook);
 });
 

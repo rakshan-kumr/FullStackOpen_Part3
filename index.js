@@ -1,3 +1,5 @@
+require("dotenv").config();
+const Phonebook = require("./models/phonebook");
 const { response } = require("express");
 const express = require("express");
 const morgan = require("morgan");
@@ -16,6 +18,7 @@ app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
+/*
 let phonebook = [
   {
     id: 1,
@@ -38,14 +41,38 @@ let phonebook = [
     number: "39-23-6423122",
   },
 ];
+*/
 
 app.get("/api/persons", (request, response) => {
-  response.json(phonebook);
+  Phonebook.find({}).then((result) => {
+    response.json(result);
+  });
 });
 
+app.post("/api/persons", (request, response) => {
+  const personBody = request.body;
+
+  if (!personBody.name | !personBody.number) {
+    return response.status(400).json({
+      error: "name or number field can't be empty",
+    });
+  }
+
+  const person = new Phonebook({
+    name: personBody.name,
+    number: personBody.number,
+  });
+
+  person.save().then((result) => {
+    response.json(result);
+    console.log("person added");
+  });
+});
+
+/*
 app.get("/api/persons/:id", (request, response) => {
   const phonebookId = Number(request.params.id);
-  const person = phonebook.find((person) => person.id === phonebookId);
+  const person = Phonebook.find((person) => person.id === phonebookId);
 
   if (person) response.json(person);
   else response.status(404).end();
@@ -103,7 +130,7 @@ app.post("/api/persons/", (request, response) => {
 const generateId = () => {
   return Math.floor(Math.random() * 1000);
 };
-
+*/
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

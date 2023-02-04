@@ -69,6 +69,38 @@ app.post("/api/persons", (request, response) => {
   });
 });
 
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body;
+  console.log(body);
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Phonebook.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then((updatedNote) => response.json(updatedNote))
+    .catch((error) => next(error));
+});
+
+app.delete("/api/persons/:id", (request, response, next) => {
+  Phonebook.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => next(error));
+});
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error);
+  if (error.name === "CastError")
+    return response.status(400).send({
+      error: "malinformed id",
+    });
+};
+
+app.use(errorHandler);
+
 /*
 app.get("/api/persons/:id", (request, response) => {
   const phonebookId = Number(request.params.id);

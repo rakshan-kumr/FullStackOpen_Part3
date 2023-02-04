@@ -4,15 +4,24 @@ GET http://localhost:3001/info
 GET http://localhost:3001/api/persons/
 
 ###
-DELETE http://localhost:3001/api/persons/5
+DELETE http://localhost:3001/api/persons/63de70b8480ef0a35a55b34
 
 ###
 
-POST http://localhost:3001/api/persons HTTP/1.1
+POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
     "name" : "Rakshan Kumar",
     "number" : "120-0999-98234"
+}
+
+###
+PUT http://localhost:3001/api/persons/63de756eec53a22c91f5b8
+Content-Type: application/json
+
+{
+    "name" : "Rakshan Kumar",
+    "number" : "120-newNum-98234"
 }
 

@@ -44,36 +44,31 @@ app.get("/api/persons/:id", (request, response) => {
     .catch((error) => next(error));
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const personBody = request.body;
-
-  if (!personBody.name | !personBody.number) {
-    return response.status(400).json({
-      error: "name or number field can't be empty",
-    });
-  }
 
   const person = new Phonebook({
     name: personBody.name,
     number: personBody.number,
   });
 
-  person.save().then((result) => {
-    response.json(result);
-    console.log("person added");
-  });
+  person
+    .save()
+    .then((result) => {
+      response.json(result);
+      console.log("person added");
+    })
+    .catch((error) => next(error));
 });
 
 app.put("/api/persons/:id", (request, response, next) => {
-  const body = request.body;
-  console.log(body);
+  const { name, number } = request.body;
 
-  const person = {
-    name: body.name,
-    number: body.number,
-  };
-
-  Phonebook.findByIdAndUpdate(request.params.id, person, { new: true })
+  Phonebook.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: "query" }
+  )
     .then((updatedNote) => response.json(updatedNote))
     .catch((error) => next(error));
 });
@@ -88,10 +83,15 @@ app.delete("/api/persons/:id", (request, response, next) => {
 
 const errorHandler = (error, request, response, next) => {
   console.log(error);
-  if (error.name === "CastError")
+  if (error.name === "CastError") {
     return response.status(400).send({
       error: "malinformed id",
     });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).send(error);
+  } else if (error.name == "MongoServerError") {
+    return response.status(400).send(error);
+  }
 };
 
 app.use(errorHandler);
@@ -158,6 +158,7 @@ const generateId = () => {
   return Math.floor(Math.random() * 1000);
 };
 */
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
